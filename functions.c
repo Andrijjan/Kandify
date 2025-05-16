@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "DATATYPE_H.h"
+#include "datatype.h"
 
 void clearConsole() {
 
@@ -27,14 +27,14 @@ void createFile() {
 	printf("\nDatoteka je kreirana!\n");
 }
 
-void readPJESMA(int* noPJESMA, FILM** arrayPJESMA) {
+void readPJESMA(int* noPJESMA, PJESMA** arrayPJESMA) {
 	FILE* pF = fopen("pjesma.bin", "rb");
 	if (pF == NULL) {
 		createFile();
 		pF = fopen("pjesma.bin", "rb");
 	}
 	fread(noPJESMA, sizeof(int), 1, pF);
-	*arrayPJESMA = (FILM*)calloc(*noPJESMA, sizeof(FILM));
+	*arrayPJESMA = (PJESMA*)calloc(*noPJESMA, sizeof(PJESMA));
 	if (*arrayPJESMA == NULL) {
 		printf("\nNedovoljno memorije za ucitavanje pjesama!\n");
 		fclose(pF);
@@ -49,7 +49,7 @@ void addPJESMA() {
 
 	clearConsole();
 
-	FILM tempPJESMA = { 0 };
+	PJESMA tempPJESMA = { 0 };
 	int noPJESMA = 0;
 
 	FILE* pF = fopen("pjesma.bin", "rb+");
@@ -67,7 +67,7 @@ void addPJESMA() {
 
 	printf("* 1. IME: ");
 	fgets(tempPJESMA.name, sizeof(tempPJESMA.name), stdin);
-	tempPJESMA.name[strcspn(tempPJESMA.name, "\n")] = 0;
+	tempPJESMA;name[strcspn(tempPJESMA.name, "\n")] = 0;
 
 	do
 	{
@@ -92,8 +92,8 @@ void addPJESMA() {
 	scanf(" %d", &tempPJESMA.copies);
 	printf("*********************************\n");
 
-	fseek(pF, sizeof(int) + noPJESMA * sizeof(FILM), SEEK_SET);
-	fwrite(&tempPJESMA, sizeof(FILM), 1, pF);
+	fseek(pF, sizeof(int) + noPJESMA * sizeof(PJESMA), SEEK_SET);
+	fwrite(&tempPJESMA, sizeof(PJESMA), 1, pF);
 
 	noPJESMA++;
 	rewind(pF);
@@ -102,21 +102,21 @@ void addPJESMA() {
 	fclose(pF);
 }
 
-void showAllFilms(short unsigned enter) {
+void showAllPJESMA(short unsigned enter) {
 
 	clearConsole();
 
-	FILE* pF = fopen("films.bin", "rb");
+	FILE* pF = fopen("PJESMA.bin", "rb");
 	int noPJESMA = 0;
-	FILM* arrayFilms = NULL;
+	PJESMA* arrayPJESMA = NULL;
 
 	if (pF == NULL) {
 		createFile();
-		pF = fopen("films.bin", "rb");
+		pF = fopen("PJESMA.bin", "rb");
 	}
 
-	readFilms(&noPJESMA, &arrayFilms);
-	if (arrayFilms == NULL) {
+	readPJESMA(&noPJESMA, &arrayPJESMA);
+	if (arrayPJESMA == NULL) {
 		printf("\nNema pjesama za ispis!\n");
 		fclose(pF);
 		getchar();
@@ -124,16 +124,16 @@ void showAllFilms(short unsigned enter) {
 	}
 
 	printf("** ISPIS SVIH PJESAMA **\n");
-	printf("%-5s %-30s %-10s %-15s %-20s %-15s\n", "ID", "Ime pjesme", "Zanr", "Trajanje", "Godina Izdanja");
+	printf("%-5s %-30s %-10s %-15s %-20s %-15s\n", "ID", "Ime pjesme", "Žanr", "Trajanje", "Godina Izdanja");
 
 	printf("--------------------------------------------------------------------------------------------------\n");
 
 	for (int i = 0; i < noPJESMA; i++) {
-		printf("%-5d %-30s %-10d %-15d %-20d %-15d\n", (arrayFilms + i)->id, (arrayFilms + i)->name, (arrayFilms + i)->genre, (arrayFilms + i)->duration, (arrayFilms + i)->year, (arrayFilms + i)->copies);
+		printf("%-5d %-30s %-10d %-15d %-20d %-15d\n", (arrayPJESMA + i)->id, (arrayPJESMA + i)->name, (arrayPJESMA + i)->genre, (arrayPJESMA + i)->duration, (arrayPJESMA + i)->year);
 	}
 
-	arrayFilms = NULL;
-	free(arrayFilms);
+	arrayPJESMA = NULL;
+	free(arrayPJESMA);
 	fclose(pF);
 
 	if (enter) {
@@ -143,15 +143,15 @@ void showAllFilms(short unsigned enter) {
 
 }
 
-void deleteFilm() {
+void deletePJESMA() {
 
 	clearConsole();
 
 	int noPJESMA = 0;
 	int id = -1;
-	FILM* arrayFilms = NULL;
+	PJESMA* arrayPJESMA = NULL;
 
-	readFilms(&noPJESMA, &arrayFilms);
+	readPJESMA(&noPJESMA, &arrayPJESMA);
 
 	if (noPJESMA == 0) {
 		printf("\nNema pjesama za brisanje!\n");
@@ -159,20 +159,20 @@ void deleteFilm() {
 		return;
 	}
 
-	if (arrayFilms == NULL) {
+	if (arrayPJESMA == NULL) {
 		printf("\nNedovoljno memorije za učitavanje pjesama!\n");
 		getchar();
 		return;
 	}
 
-	showAllFilms(0);
+	showAllPJESMA(0);
 
 	do {
 		printf("\nUnesite ID pjesme koju želite obrisati: ");
 		scanf(" %d", &id);
 	} while (id < 0 || id >= noPJESMA);
 
-	FILE* pF = fopen("films.bin", "wb+");
+	FILE* pF = fopen("PJESMA.bin", "wb+");
 	if (pF == NULL) {
 		printf("\nGreška pri otvaranju datoteke pjesme.bin!\n");
 		return;
@@ -181,11 +181,11 @@ void deleteFilm() {
 	fseek(pF, sizeof(int), SEEK_SET);
 
 	for (int i = 0; i < noPJESMA; i++) {
-		if ((arrayFilms + i)->id != id) {
-			if ((arrayFilms + i)->id > id) {
-				(arrayFilms + i)->id--;
+		if ((arrayPJESMA + i)->id != id) {
+			if ((arrayPJESMA + i)->id > id) {
+				(arrayPJESMA + i)->id--;
 			}
-			fwrite((arrayFilms + i), sizeof(FILM), 1, pF);
+			fwrite((arrayPJESMA + i), sizeof(PJESMA), 1, pF);
 		}
 	}
 
@@ -193,34 +193,34 @@ void deleteFilm() {
 	rewind(pF);
 	fwrite(&noPJESMA, sizeof(int), 1, pF);
 
-	arrayFilms = NULL;
-	free(arrayFilms);
+	arrayPJESMA = NULL;
+	free(arrayPJESMA);
 	fclose(pF);
 }
 
-void updateFilm() {
+void updatePJESMA() {
 	clearConsole();
 	int noPJESMA = 0;
 	int id = -1;
-	FILM* arrayFilms = NULL;
-	readFilms(&noPJESMA, &arrayFilms);
+	PJESMA* arrayPJESMA = NULL;
+	readPJESMA(&noPJESMA, &arrayPJESMA);
 	if (noPJESMA == 0) {
 		printf("\nNema pjesama za uređivanje!\n");
 		getchar();
 		return;
 	}
-	if (arrayFilms == NULL) {
+	if (arrayPJESMA == NULL) {
 		printf("\nNedovoljno memorije za učitavanje pjesama!\n");
 		getchar();
 		return;
 	}
-	showAllFilms(0);
+	showAllPJESMA(0);
 	do {
 		printf("\nUnesite ID pjesme koji zelite urediti: ");
 		scanf(" %d", &id);
 		getchar();
 	} while (id < 0 || id >= noPJESMA);
-	FILM tempPJESMA = { 0 };
+	PJESMA tempPJESMA = { 0 };
 	tempPJESMA.id = id;
 	printf("\n");
 	printf("*********************************\n");
@@ -244,15 +244,15 @@ void updateFilm() {
 	printf("* 4. GODINA IZDANJA: ");
 	scanf(" %d", &tempPJESMA.year);
 	printf("*********************************\n");
-	FILE* pF = fopen("films.bin", "rb+");
+	FILE* pF = fopen("PJESMA.bin", "rb+");
 	if (pF == NULL) {
-		printf("\nGreška pri otvaranju datoteke films.bin!\n");
+		printf("\nGreška pri otvaranju datoteke PJESMA.bin!\n");
 		return;
 	}
-	fseek(pF, sizeof(int) + id * sizeof(FILM), SEEK_SET);
-	fwrite(&tempPJESMA, sizeof(FILM), 1, pF);
+	fseek(pF, sizeof(int) + id * sizeof(PJESMA), SEEK_SET);
+	fwrite(&tempPJESMA, sizeof(PJESMA), 1, pF);
 
 	fclose(pF);
-	arrayFilms = NULL;
-	free(arrayFilms);
+	arrayPJESMA = NULL;
+	free(arrayPJESMA);
 }
