@@ -23,7 +23,7 @@ int mainMenu() {
     switch (option) {
     case 1:
         while (condition) {
-            condition = filmMenu();
+            condition = PJESMAMenu();
         }
         break;
     case 2:
