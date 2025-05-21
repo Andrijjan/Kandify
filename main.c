@@ -1,13 +1,9 @@
-#include "functions.h"
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include "kandify.h"
 
-int main(void) {
-
-	unsigned short condition = 1;
-
-	while (condition) {
-
-		condition = mainMenu();
-	}
-
-	return 0;
+int main() {
+    prikaziGlavniMeni();
+    return 0;
 }
