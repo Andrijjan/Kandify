@@ -103,7 +103,7 @@ void urediZapis() {
 
             printf("Trenutno trajanje: %.2f\nNovo trajanje: ", zapisi[i].trajanje);
             scanf("%f", &zapisi[i].trajanje);
-            getchar(); // za Enter nakon float
+            getchar(); 
             break;
         }
     }
