@@ -11,7 +11,9 @@
 #define MAX_ZANR 50
 #define MAX_ZAPISA 100
 
-extern char trenutna_datoteka[256];  // Dinamički naziv datoteke
+#define CONFIG_FILE "config.txt"
+
+extern char trenutna_datoteka[256];
 
 typedef struct {
     int id;
@@ -41,7 +43,6 @@ typedef enum {
 
 void prikaziGlavniMeni();
 void prikaziMeniPjesama();
-
 void dodajZapis();
 void prikaziZapise();
 void urediZapis();
@@ -51,12 +52,12 @@ void pretraziZapis();
 void obrisiDatoteku();
 void preimenujDatoteku();
 
+int ucitajNazivDatoteke();
+void sacuvajNazivDatoteke();
+
 static inline void ocistiBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
-
-int usporediNazive(const void* a, const void* b);
-int usporediID(const void* a, const void* b);
 
 #endif
