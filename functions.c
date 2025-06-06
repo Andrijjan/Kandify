@@ -1,15 +1,21 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "kandify.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-int ucitajZapise(Zapis zapisi[], int max) {
+static int ucitajZapise(Zapis** zapisi) {
     FILE* fp = fopen(DATOTEKA, "rb");
     if (!fp) return 0;
 
+    *zapisi = (Zapis*)malloc(MAX_ZAPISA * sizeof(Zapis));
+    if (!*zapisi) {
+        perror("malloc");
+        fclose(fp);
+        return 0;
+    }
+
     int count = 0;
-    while (fread(&zapisi[count], sizeof(Zapis), 1, fp) == 1 && count < max) {
+    while (fread(&(*zapisi)[count], sizeof(Zapis), 1, fp) == 1 && count < MAX_ZAPISA) {
         count++;
     }
 
@@ -18,12 +24,12 @@ int ucitajZapise(Zapis zapisi[], int max) {
 }
 
 void dodajZapis() {
-    Zapis zapisi[MAX_ZAPISA];
-    int count = ucitajZapise(zapisi, MAX_ZAPISA);
+    Zapis* zapisi = NULL;
+    int count = ucitajZapise(&zapisi);
 
     Zapis novi;
     novi.id = count + 1;
-    getchar();
+    ocistiBuffer();
 
     printf("Unesite naziv: ");
     fgets(novi.naziv, MAX_NAZIV, stdin);
@@ -45,47 +51,44 @@ void dodajZapis() {
 
     FILE* fp = fopen(DATOTEKA, "ab");
     if (!fp) {
-        printf("Greska pri otvaranju datoteke.\n");
+        perror("Greska pri otvaranju datoteke");
+        free(zapisi);
         return;
     }
 
     fwrite(&novi, sizeof(Zapis), 1, fp);
     fclose(fp);
+    free(zapisi);
 
     printf("Zapis uspjesno dodan.\n");
 }
 
 void prikaziZapise() {
-    Zapis z;
-    FILE* fp = fopen(DATOTEKA, "rb");
-    if (!fp) {
-        printf("Greska pri otvaranju datoteke.\n");
-        return;
-    }
+    Zapis* zapisi = NULL;
+    int count = ucitajZapise(&zapisi);
 
-    while (fread(&z, sizeof(Zapis), 1, fp) == 1) {
+    for (int i = 0; i < count; i++) {
+        Zapis z = zapisi[i];
         printf("\nID: %d | Naziv: %s | Autor: %s | Zanr: %s | Godina: %d | Trajanje: %.2f min\n",
             z.id, z.naziv, z.autor, z.zanr, z.godina, z.trajanje);
     }
 
-    fclose(fp);
+    free(zapisi);
 }
 
 void urediZapis() {
-    Zapis zapisi[MAX_ZAPISA];
-    int count = ucitajZapise(zapisi, MAX_ZAPISA);
+    Zapis* zapisi = NULL;
+    int count = ucitajZapise(&zapisi);
 
     int id;
     printf("Unesite ID zapisa za uredjivanje: ");
     scanf("%d", &id);
-    getchar();
+    ocistiBuffer();
 
     int found = 0;
     for (int i = 0; i < count; i++) {
         if (zapisi[i].id == id) {
             found = 1;
-            printf("Uredjivanje zapisa ID %d:\n", id);
-
             printf("Trenutni naziv: %s\nNovi naziv: ", zapisi[i].naziv);
             fgets(zapisi[i].naziv, MAX_NAZIV, stdin);
             zapisi[i].naziv[strcspn(zapisi[i].naziv, "\n")] = '\0';
@@ -103,13 +106,14 @@ void urediZapis() {
 
             printf("Trenutno trajanje: %.2f\nNovo trajanje: ", zapisi[i].trajanje);
             scanf("%f", &zapisi[i].trajanje);
-            getchar(); 
+            ocistiBuffer();
             break;
         }
     }
 
     if (!found) {
         printf("Zapis s ID %d nije pronadjen.\n", id);
+        free(zapisi);
         return;
     }
 
@@ -118,13 +122,14 @@ void urediZapis() {
         fwrite(&zapisi[i], sizeof(Zapis), 1, fp);
     }
     fclose(fp);
+    free(zapisi);
 
     printf("Zapis uspjesno azuriran.\n");
 }
 
 void izbrisiZapis() {
-    Zapis zapisi[MAX_ZAPISA];
-    int count = ucitajZapise(zapisi, MAX_ZAPISA);
+    Zapis* zapisi = NULL;
+    int count = ucitajZapise(&zapisi);
 
     int id;
     printf("Unesite ID zapisa za brisanje: ");
@@ -146,6 +151,7 @@ void izbrisiZapis() {
         fwrite(&zapisi[i], sizeof(Zapis), 1, fp);
     }
     fclose(fp);
+    free(zapisi);
 
     printf("Zapis izbrisan i ID-evi azurirani.\n");
 }
