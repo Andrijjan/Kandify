@@ -1,9 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "kandify.h"
-#include <stdio.h>
 
 void prikaziMeniPjesama() {
-    int izbor;
+    MeniPjesamaOpcije izbor;
     do {
         printf("\n===================================\n");
         printf("      [>>> Meni Pjesama <<<]       \n");
@@ -15,28 +14,28 @@ void prikaziMeniPjesama() {
         printf("0. Povratak na glavni meni\n");
         printf("-----------------------------------\n");
         printf("\nUnesite izbor: ");
-        scanf("%d", &izbor);
+        scanf("%d", (int*)&izbor);
 
         switch (izbor) {
-        case 1:
+        case DODAJ_ZAPIS:
             dodajZapis();
             break;
-        case 2:
+        case PRIKAZI_ZAPISE:
             printf("\n|+==============================+|\n");
             printf("|--> Trenutni zapis pjesama:  <--|\n");
             printf("|+==============================+|\n");
             prikaziZapise();
             break;
-        case 3:
+        case UREDI_ZAPIS:
             urediZapis();
             break;
-        case 4:
+        case IZBRISI_ZAPIS:
             izbrisiZapis();
             break;
-        case 0:
+        case POVRATAK:
             break;
         default:
             printf("Pogresan unos.\n");
         }
-    } while (izbor != 0);
+    } while (izbor != POVRATAK);
 }
