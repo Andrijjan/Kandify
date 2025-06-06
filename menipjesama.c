@@ -11,31 +11,31 @@ void prikaziMeniPjesama() {
         printf("2. Prikazi sve zapise\n");
         printf("3. Uredi zapis\n");
         printf("4. Izbrisi zapis\n");
+        printf("5. Sortiraj zapise\n");
+        printf("6. Pretrazi zapis\n");
+        printf("7. Obrisi datoteku\n");
+        printf("8. Preimenuj datoteku\n");
         printf("0. Povratak na glavni meni\n");
         printf("-----------------------------------\n");
         printf("\nUnesite izbor: ");
-        scanf("%d", (int*)&izbor);
+
+        if (scanf("%d", (int*)&izbor) != 1) {
+            printf("Pogresan unos.\n");
+            ocistiBuffer();
+            continue;
+        }
 
         switch (izbor) {
-        case DODAJ_ZAPIS:
-            dodajZapis();
-            break;
-        case PRIKAZI_ZAPISE:
-            printf("\n|+==============================+|\n");
-            printf("|--> Trenutni zapis pjesama:  <--|\n");
-            printf("|+==============================+|\n");
-            prikaziZapise();
-            break;
-        case UREDI_ZAPIS:
-            urediZapis();
-            break;
-        case IZBRISI_ZAPIS:
-            izbrisiZapis();
-            break;
-        case POVRATAK:
-            break;
-        default:
-            printf("Pogresan unos.\n");
+        case DODAJ_ZAPIS: dodajZapis(); break;
+        case PRIKAZI_ZAPISE: prikaziZapise(); break;
+        case UREDI_ZAPIS: urediZapis(); break;
+        case IZBRISI_ZAPIS: izbrisiZapis(); break;
+        case SORTIRAJ_ZAPISE: sortirajZapise(); break;
+        case PRETRAZI_ZAPIS: pretraziZapis(); break;
+        case BRISI_DATOTEKU: obrisiDatoteku(); break;
+        case PREIMENUJ_DATOTEKU: preimenujDatoteku(); break;
+        case POVRATAK: break;
+        default: printf("Pogresan unos.\n"); break;
         }
     } while (izbor != POVRATAK);
 }
