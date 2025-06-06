@@ -11,7 +11,12 @@ void prikaziGlavniMeni() {
         printf("0. Izlaz\n");
         printf("-----------------------------------\n");
         printf("Unesite izbor: ");
-        scanf("%d", (int*)&izbor);
+
+        if (scanf("%d", (int*)&izbor) != 1) {
+            printf("Pogresan unos.\n");
+            ocistiBuffer();
+            continue;
+        }
 
         switch (izbor) {
         case MENI_PJESAMA:
