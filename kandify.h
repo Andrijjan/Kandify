@@ -9,7 +9,6 @@
 #define MAX_NAZIV 100
 #define MAX_AUTOR 100
 #define MAX_ZANR 50
-#define MAX_ZAPISA 100
 
 #define CONFIG_FILE "config.txt"
 
@@ -38,11 +37,13 @@ typedef enum {
     SORTIRAJ_ZAPISE = 5,
     PRETRAZI_ZAPIS = 6,
     BRISI_DATOTEKU = 7,
-    PREIMENUJ_DATOTEKU = 8
+    PREIMENUJ_DATOTEKU = 8,
+    KOPIRAJ_DATOTEKU = 9
 } MeniPjesamaOpcije;
 
 void prikaziGlavniMeni();
 void prikaziMeniPjesama();
+
 void dodajZapis();
 void prikaziZapise();
 void urediZapis();
@@ -51,13 +52,20 @@ void sortirajZapise();
 void pretraziZapis();
 void obrisiDatoteku();
 void preimenujDatoteku();
+void kopirajDatoteku();
 
 int ucitajNazivDatoteke();
 void sacuvajNazivDatoteke();
+
+int ucitajZapise();
+int sacuvajZapise();
+
+int binarySearchRecursive(int left, int right, const char* key);
+int cmpNaziv(const void* a, const void* b);
 
 static inline void ocistiBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-#endif
+#endif // KANDIFY_H
