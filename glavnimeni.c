@@ -5,7 +5,7 @@ void prikaziGlavniMeni() {
     GlavniMeniOpcije izbor;
     do {
         printf("\n===================================\n");
-        printf("         >>> Glavni Meni <<<        \n");
+        printf("         >>> Glavni Meni <<<       \n");
         printf("===================================\n");
         printf("1. Meni pjesama\n");
         printf("0. Izlaz\n");
